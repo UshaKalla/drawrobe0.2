@@ -3,15 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sketch → Image</title>
+  <title>draw(ward)robe</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="src/style.css"/>
+  <style>
+    /* Inline brand style adjustments to ensure the name renders correctly */
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; /* Bold/Extra bold */
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      color: #000000; /* Bold black font */
+    }
+
+    .logo span.strike-text { 
+      text-decoration: line-through;
+      color: #666666; /* Muted gray line-through for styling */
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
   <header>
-    <div class="logo">sketch<span>→</span>img</div>
+    <div class="logo">draw(<span class="strike-text">ward</span>)robe</div>
+    
     <div class="toolbar">
       <button class="tool-btn active" id="penBtn">✏ PEN</button>
       <button class="tool-btn" id="eraserBtn">◻ ERASER</button>
@@ -29,13 +46,11 @@
 
   <div class="main">
 
-    <!-- Left: Drawing Canvas -->
     <div class="draw-panel">
       <div class="panel-label">// draw your sketch</div>
       <canvas id="sketchCanvas"></canvas>
     </div>
 
-    <!-- Right: Result -->
     <div class="result-panel">
       <div class="panel-label">// generated image</div>
 
