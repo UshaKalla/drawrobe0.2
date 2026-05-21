@@ -1,7 +1,7 @@
 // ── api.js ────────────────────────────────────────────────────
 // Handles all communication with the fal.ai API
 
-const API_KEY = "your-fal-ai-key-here"; // ← paste your key here
+const API_KEY = "80be26ff-151c-4dbb-af3a-71850d47d791:8b97e166cc9b40a4e4effcfc99e5b9c9"; 
 
 const FAL_MODEL = 'fal-ai/lcm-sd15-i2i';
 
