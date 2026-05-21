@@ -49,23 +49,17 @@ document.getElementById('promptInput').addEventListener('keydown', e => {
 });
 
 async function generate() {
-  const apiKey = document.getElementById('apiKeyInput').value.trim();
   const prompt = document.getElementById('promptInput').value.trim() || 'realistic photo, highly detailed';
   const errEl  = document.getElementById('errorMsg');
 
   errEl.style.display = 'none';
-
-  if (!apiKey) {
-    showError('Please enter your fal.ai API key.');
-    return;
-  }
 
   // Show loading state
   setLoading(true);
 
   try {
     const blob      = await getCanvasBlob();
-    const resultUrl = await generateFromSketch({ blob, prompt, apiKey });
+    const resultUrl = await generateFromSketch({ blob, prompt });
 
     const img = document.getElementById('resultImg');
     img.src   = resultUrl;

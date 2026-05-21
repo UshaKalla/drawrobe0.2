@@ -1,18 +1,19 @@
 // ── api.js ────────────────────────────────────────────────────
 // Handles all communication with the fal.ai API
 
+const API_KEY = "your-fal-ai-key-here"; // ← paste your key here
+
 const FAL_MODEL = 'fal-ai/lcm-sd15-i2i';
 
 /**
  * Uploads a PNG blob to fal.ai storage and returns the hosted URL.
  * fal.ai requires a hosted URL — it does not accept raw base64.
  */
-async function uploadImageToFal(blob, apiKey) {
-  // Step 1: Request a presigned upload URL
+async function uploadImageToFal(blob) {
   const initiateRes = await fetch('https://rest.fal.ai/storage/upload/initiate', {
     method: 'POST',
     headers: {
-      'Authorization': `Key ${apiKey}`,
+      'Authorization': `Key ${API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -28,7 +29,6 @@ async function uploadImageToFal(blob, apiKey) {
 
   const { upload_url, file_url } = await initiateRes.json();
 
-  // Step 2: Upload the image blob to the presigned URL
   const putRes = await fetch(upload_url, {
     method: 'PUT',
     headers: { 'Content-Type': 'image/png' },
@@ -46,11 +46,11 @@ async function uploadImageToFal(blob, apiKey) {
  * Runs the LCM sketch-to-image model on fal.ai.
  * Returns the URL of the generated image.
  */
-async function runSketchToImage({ imageUrl, prompt, apiKey }) {
+async function runSketchToImage({ imageUrl, prompt }) {
   const res = await fetch(`https://fal.run/${FAL_MODEL}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Key ${apiKey}`,
+      'Authorization': `Key ${API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -78,8 +78,8 @@ async function runSketchToImage({ imageUrl, prompt, apiKey }) {
 /**
  * Full pipeline: upload sketch → run model → return result URL
  */
-async function generateFromSketch({ blob, prompt, apiKey }) {
-  const imageUrl = await uploadImageToFal(blob, apiKey);
-  const resultUrl = await runSketchToImage({ imageUrl, prompt, apiKey });
+async function generateFromSketch({ blob, prompt }) {
+  const imageUrl  = await uploadImageToFal(blob);
+  const resultUrl = await runSketchToImage({ imageUrl, prompt });
   return resultUrl;
 }
