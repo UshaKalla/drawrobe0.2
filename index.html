@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sketch → Image</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="src/style.css"/>
+</head>
+<body>
+
+  <header>
+    <div class="logo">sketch<span>→</span>img</div>
+    <div class="toolbar">
+      <button class="tool-btn active" id="penBtn">✏ PEN</button>
+      <button class="tool-btn" id="eraserBtn">◻ ERASER</button>
+      <input type="range" class="size-slider" id="sizeSlider" min="1" max="40" value="4" title="Brush size"/>
+      <div class="color-swatches">
+        <div class="color-swatch active" style="background:#f0f0f0" data-color="#f0f0f0"></div>
+        <div class="color-swatch" style="background:#c8f04a" data-color="#c8f04a"></div>
+        <div class="color-swatch" style="background:#ff6b6b" data-color="#ff6b6b"></div>
+        <div class="color-swatch" style="background:#60a5fa" data-color="#60a5fa"></div>
+        <div class="color-swatch" style="background:#f97316" data-color="#f97316"></div>
+      </div>
+      <button class="tool-btn" id="clearBtn">✕ CLEAR</button>
+    </div>
+  </header>
+
+  <div class="main">
+
+    <!-- Left: Drawing Canvas -->
+    <div class="draw-panel">
+      <div class="panel-label">// draw your sketch</div>
+      <canvas id="sketchCanvas"></canvas>
+    </div>
+
+    <!-- Right: Result -->
+    <div class="result-panel">
+      <div class="panel-label">// generated image</div>
+
+      <div class="result-inner">
+        <div class="placeholder" id="placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9l4-4 4 4 4-4 4 4"/>
+            <circle cx="8.5" cy="14.5" r="1.5"/>
+          </svg>
+          <p>Draw something on<br/>the left, then hit<br/>Generate.</p>
+        </div>
+        <img id="resultImg" alt="Generated image"/>
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="spinner"></div>
+          <div class="loading-text">GENERATING...</div>
+        </div>
+      </div>
+
+      <div id="errorMsg"></div>
+
+      <div class="prompt-bar">
+        <label>PROMPT</label>
+        <input type="text" id="promptInput" placeholder="realistic photo, high detail..." value="realistic photo, highly detailed, vivid colors"/>
+      </div>
+
+      <div class="apikey-bar">
+        <label>API KEY</label>
+        <input type="password" id="apiKeyInput" placeholder="Paste your fal.ai key here"/>
+      </div>
+
+      <div class="generate-bar">
+        <button id="generateBtn">✦ Generate Image</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="src/canvas.js"></script>
+  <script src="src/api.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
