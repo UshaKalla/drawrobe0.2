@@ -67,5 +67,5 @@ function onStrokeDrawn() {
     const prompt = document.getElementById("promptInput").value.trim()
       || "realistic photo, highly detailed";
     sendSketch(prompt);
-  }, 400);
+  }, 600);
 }

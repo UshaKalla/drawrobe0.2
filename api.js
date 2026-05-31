@@ -65,8 +65,8 @@ function sendSketch(prompt) {
   connection.send(JSON.stringify({
     prompt:              prompt,
     image_url:           base64,
-    strength:            0.8,
-    num_inference_steps: 4,
+    strength:            0.6,
+    num_inference_steps: 2,
     guidance_scale:      1,
     sync_mode:           true,
   }));
