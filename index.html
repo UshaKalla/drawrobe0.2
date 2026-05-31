@@ -6,23 +6,21 @@
   <title>draw(ward)robe</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
   <style>
-    /* Inline brand style adjustments to ensure the name renders correctly */
     .logo {
       font-family: 'Syne', sans-serif;
-      font-weight: 800; /* Bold/Extra bold */
+      font-weight: 800;
       font-size: 22px;
       letter-spacing: -0.5px;
-      color: #000000; /* Bold black font */
+      color: #000000;
     }
-
     .logo span.strike-text { 
       text-decoration: line-through;
-      color: #000000; /* Muted gray line-through for styling */
+      color: #000000;
       font-weight: 600;
     }
   </style>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
@@ -61,7 +59,7 @@
             <path d="M3 9l4-4 4 4 4-4 4 4"/>
             <circle cx="8.5" cy="14.5" r="1.5"/>
           </svg>
-          <p>Draw something on<br/>the left, then hit<br/>Generate.</p>
+          <p>Start drawing and<br/>the image will update<br/>automatically.</p>
         </div>
         <img id="resultImg" alt="Generated image"/>
         <div class="loading-overlay" id="loadingOverlay">
@@ -76,13 +74,11 @@
         <label>PROMPT</label>
         <input type="text" id="promptInput" placeholder="realistic photo, high detail..." value="realistic photo, highly detailed, vivid colors"/>
       </div>
-      <div class="generate-bar">
-        <button id="generateBtn">✦ Generate Image</button>
-      </div>
+
     </div>
 
   </div>
-  <link rel="stylesheet" href="style.css"/>
+
   <script src="canvas.js"></script>
   <script src="api.js"></script>
   <script src="app.js"></script>
