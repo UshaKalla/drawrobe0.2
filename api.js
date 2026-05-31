@@ -1,85 +1,58 @@
 // ── api.js ────────────────────────────────────────────────────
-// Handles all communication with the fal.ai API
 
-const API_KEY = "80be26ff-151c-4dbb-af3a-71850d47d791:8b97e166cc9b40a4e4effcfc99e5b9c9"; 
+const API_KEY  = "your-key-here";
+const FAL_MODEL = "fal-ai/lcm-sd15-i2i";
 
-const FAL_MODEL = 'fal-ai/lcm-sd15-i2i';
+let connection = null;
+let onResultCallback = null;
 
-/**
- * Uploads a PNG blob to fal.ai storage and returns the hosted URL.
- * fal.ai requires a hosted URL — it does not accept raw base64.
- */
-async function uploadImageToFal(blob) {
-  const initiateRes = await fetch('https://rest.fal.ai/storage/upload/initiate', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      content_type: 'image/png',
-      file_name: 'sketch.png',
-    }),
-  });
+// Opens a persistent WebSocket connection to fal.ai
+// We keep it open the whole time so images generate instantly
+function connectRealtime(onResult) {
+  onResultCallback = onResult;
 
-  if (!initiateRes.ok) {
-    const err = await initiateRes.json().catch(() => ({}));
-    throw new Error(err.detail || `Upload initiate failed (${initiateRes.status})`);
-  }
+  const ws = new WebSocket(
+    `wss://fal.run/${FAL_MODEL}/realtime?fal_jwt_token=${API_KEY}`
+  );
 
-  const { upload_url, file_url } = await initiateRes.json();
+  ws.onopen = () => {
+    console.log("Connected to fal.ai realtime");
+  };
 
-  const putRes = await fetch(upload_url, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'image/png' },
-    body: blob,
-  });
+  ws.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.images?.[0]?.url) {
+      onResultCallback(data.images[0].url);
+    }
+  };
 
-  if (!putRes.ok) {
-    throw new Error(`Image upload failed (${putRes.status})`);
-  }
+  ws.onerror = (err) => console.error("WebSocket error:", err);
+  ws.onclose = () => console.log("WebSocket closed");
 
-  return file_url;
+  connection = ws;
 }
 
-/**
- * Runs the LCM sketch-to-image model on fal.ai.
- * Returns the URL of the generated image.
- */
-async function runSketchToImage({ imageUrl, prompt }) {
-  const res = await fetch(`https://fal.run/${FAL_MODEL}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Key ${API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      image_url:           imageUrl,
-      prompt:              prompt,
-      strength:            0.8,
-      num_inference_steps: 4,
-      guidance_scale:      1,
-    }),
-  });
+// Sends the current canvas to fal.ai
+// Canvas is resized to 512x512 for fastest generation
+function sendSketch(prompt) {
+  if (!connection || connection.readyState !== WebSocket.OPEN) return;
 
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Model request failed (${res.status})`);
-  }
+  // Resize canvas to 512x512 for speed
+  const offscreen = document.createElement("canvas");
+  offscreen.width  = 512;
+  offscreen.height = 512;
+  offscreen.getContext("2d").drawImage(
+    document.getElementById("sketchCanvas"), 0, 0, 512, 512
+  );
 
-  const data = await res.json();
-  const url  = data.images?.[0]?.url;
+  const base64 = offscreen.toDataURL("image/png");
 
-  if (!url) throw new Error('No image returned from the model.');
-
-  return url;
-}
-
-/**
- * Full pipeline: upload sketch → run model → return result URL
- */
-async function generateFromSketch({ blob, prompt }) {
-  const imageUrl  = await uploadImageToFal(blob);
-  const resultUrl = await runSketchToImage({ imageUrl, prompt });
-  return resultUrl;
+  connection.send(JSON.stringify({
+    prompt:    prompt,
+    image_url: base64,
+    strength:  0.8,
+    num_inference_steps: 4,
+    guidance_scale: 1,
+    sync_mode: true,  // get image back immediately as base64
+  }));
 }

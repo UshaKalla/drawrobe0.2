@@ -64,6 +64,9 @@ function draw(e) {
 
   lastX = p.x;
   lastY = p.y;
+
+  // Tell app.js a stroke was drawn so it can trigger live generation
+  onStrokeDrawn();
 }
 
 function stopDraw() {
